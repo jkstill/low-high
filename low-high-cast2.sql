@@ -2,15 +2,24 @@
 
 col low_value format a20
 col high_value format a20
+col table_name format a30
+col data_type format a20
 
-select  
+set linesize 200 trimspool on
+set pagesize 60
+
+select
+	us.table_name,
+	uc.data_type,
 	us.column_name,
-	case uc.data_type
-		when 'VARCHAR2' then
-			utl_raw.cast_to_varchar2(us.low_value) 
-		when 'NUMBER' then
+	case 
+		when uc.data_type in ('VARCHAR2','VARCHAR','CHAR')  then
+			-- using "'' ||" to for implicit conversion
+			-- utl_raw.cast_to_varchar2 fails for some values of hex based character strings
+			utl_raw.cast_to_varchar2('' || us.low_value)
+		when uc.data_type = 'NUMBER' then
 			to_char(utl_raw.cast_to_number(us.low_value) )
-		when 'DATE' then
+		when uc.data_type = 'DATE' then
 	 		-- extract the century and year information from the
 	 		-- internal date format
 	 		-- century = (century byte -100) * 100
@@ -34,7 +43,7 @@ select
 		  		)
 		  		- 100
 	 		)) --current_year
-			   		|| '-' || 
+			   		|| '-' ||
 						lpad(
 							substr(
 				    			substr(dump(us.low_value),15),
@@ -43,7 +52,7 @@ select
 			   			) -- month
 							,2,'0'
 						)
-			   		||  '-' || 
+			   		||  '-' ||
 						lpad(
 							substr(
 				    			substr(dump(us.low_value),15),
@@ -88,14 +97,15 @@ select
 				    		)
 				    		,2,'0'
 			   		) --second
+			else 'NOT SUPPORTED'
 			end low_value,
 			-- get the high value
-	case uc.data_type
-		when 'VARCHAR2' then
-			utl_raw.cast_to_varchar2(us.high_value) 
-		when 'NUMBER' then
+	case
+		when uc.data_type in ('VARCHAR2','VARCHAR','CHAR')  then
+			utl_raw.cast_to_varchar2('' || us.high_value)
+		when uc.data_type = 'NUMBER' then
 			to_char(utl_raw.cast_to_number(us.high_value) )
-		when 'DATE' then
+		when uc.data_type = 'DATE' then
 	 		-- extract the century and year information from the
 	 		-- internal date format
 	 		-- century = (century byte -100) * 100
@@ -119,7 +129,7 @@ select
 		  		)
 		  		- 100
 	 		)) --current_year
-			   		|| '-' || 
+			   		|| '-' ||
 						lpad(
 							substr(
 				    			substr(dump(us.high_value),15),
@@ -128,7 +138,7 @@ select
 			   			) -- month
 							,2,'0'
 						)
-			   		||  '-' || 
+			   		||  '-' ||
 						lpad(
 							substr(
 				    			substr(dump(us.high_value),15),
@@ -173,11 +183,15 @@ select
 				    		)
 				    		,2,'0'
 			   		) --second
+			else 'NOT SUPPORTED'
 			end high_value
-from user_tab_col_statistics us
-join user_tab_columns uc on uc.table_name = us.table_name
+from all_tab_col_statistics us
+join all_tab_columns uc on uc.table_name = us.table_name
 	and uc.column_name = us.column_name
+	and us.owner = 'JKSTILL'
 	and us.table_name = 'LOW_HIGH'
 	--and us.column_name in ('C1','N1')
+order by uc.column_id
 /
+
 
