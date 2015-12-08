@@ -187,7 +187,7 @@ from all_tab_col_statistics us
 join all_tab_columns uc on uc.owner = us.owner
 	and uc.table_name = us.table_name
 	and uc.column_name = us.column_name
-	and us.owner = 'JKSTILL'
+	and us.owner = USER
 	and us.table_name = 'LOW_HIGH'
 	--and us.column_name in ('C1','N1')
 order by uc.column_id
