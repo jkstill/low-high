@@ -4,7 +4,7 @@ define date_format='yyyy-mm-dd hh24:mi:ss'
 select 
 	to_char(min(d1), '&&date_format') d1_min
 	, to_char(max(d1), '&&date_format') d1_max
-from t;
+from low_high;
 
 col v_low_value new_value v_low_value
 col v_high_value new_value v_high_value

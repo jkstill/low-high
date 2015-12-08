@@ -14,9 +14,7 @@ select
 	us.column_name,
 	case 
 		when uc.data_type in ('VARCHAR2','VARCHAR','CHAR')  then
-			-- using "'' ||" to for implicit conversion
-			-- utl_raw.cast_to_varchar2 fails for some values of hex based character strings
-			utl_raw.cast_to_varchar2('' || us.low_value)
+			utl_raw.cast_to_varchar2(us.low_value)
 		when uc.data_type = 'NUMBER' then
 			to_char(utl_raw.cast_to_number(us.low_value) )
 		when uc.data_type = 'DATE' then
@@ -102,7 +100,7 @@ select
 			-- get the high value
 	case
 		when uc.data_type in ('VARCHAR2','VARCHAR','CHAR')  then
-			utl_raw.cast_to_varchar2('' || us.high_value)
+			utl_raw.cast_to_varchar2(us.high_value)
 		when uc.data_type = 'NUMBER' then
 			to_char(utl_raw.cast_to_number(us.high_value) )
 		when uc.data_type = 'DATE' then
@@ -186,7 +184,8 @@ select
 			else 'NOT SUPPORTED'
 			end high_value
 from all_tab_col_statistics us
-join all_tab_columns uc on uc.table_name = us.table_name
+join all_tab_columns uc on uc.owner = us.owner
+	and uc.table_name = us.table_name
 	and uc.column_name = us.column_name
 	and us.owner = 'JKSTILL'
 	and us.table_name = 'LOW_HIGH'
