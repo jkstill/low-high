@@ -7,7 +7,7 @@ drop table low_high purge;
 create table low_high
 as 
 select id
-	, power(10,9) + mod(id,128) n1
+	, mod(id,128) n1
 	, substr('&&chars',mod(id,42)+1, 20) c1
 	, sysdate-(mod(id,1000)+1) d1
 from (

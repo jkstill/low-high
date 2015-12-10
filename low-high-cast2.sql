@@ -1,9 +1,15 @@
 
+-- low-high-cast2.sql
+-- Jared Still
+-- http://www.pythian.com/blog/author/still/
+-- still@pythian.com
+-- jkstill@gmail.com
 
 col low_value format a20
 col high_value format a20
-col table_name format a30
+col table_name format a10 head 'TABLE'
 col data_type format a20
+col column_name format a6 head 'COLUMN'
 
 set linesize 200 trimspool on
 set pagesize 60

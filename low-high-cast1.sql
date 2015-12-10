@@ -1,22 +1,30 @@
 
-col low_value format 99999999
-col high_value format 99999999
+-- low-high-cast1.sql
+-- Jared Still
+-- http://www.pythian.com/blog/author/still/
+-- still@pythian.com
+-- jkstill@gmail.com
 
-select  utl_raw.cast_to_number(low_value) low_value
+col low_value format 999999999999
+col high_value format 999999999999
+
+select  column_name
+	, utl_raw.cast_to_number(low_value) low_value
 	, utl_raw.cast_to_number(high_value) high_value
-from user_tab_col_statistics
+from user_tab_columns
 where table_name = 'LOW_HIGH'
-	and column_name = 'N1'
+	and data_type = 'NUMBER'
 /
 
 col low_value format a20
 col high_value format a20
 
-select  utl_raw.cast_to_varchar2(low_value) low_value
+select  column_name
+	, utl_raw.cast_to_varchar2(low_value) low_value
 	, utl_raw.cast_to_varchar2(high_value) high_value
-from user_tab_col_statistics
+from user_tab_columns
 where table_name = 'LOW_HIGH'
-	and column_name = 'C1'
+	and data_type = 'VARCHAR2'
 /
 
 
